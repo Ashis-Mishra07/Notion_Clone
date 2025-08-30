@@ -7,7 +7,7 @@ import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
 import { useMutation, useQuery } from "convex/react";
 import dynamic from "next/dynamic";
-import { useMemo } from "react";
+import { useMemo, useCallback, useRef } from "react";
 
 interface Props {
   params: {
@@ -20,18 +20,34 @@ const DocumentDetailsPage = ({ params }: Props) => {
     id: params.documentId,
   });
   const update = useMutation(api.documents.updateDocument);
+  const lastContentRef = useRef<string>("");
 
   const Editor = useMemo(
-    () => dynamic(() => import("@/components/editor"), { ssr: false }),
+    () =>
+      dynamic(() => import("@/components/editor"), {
+        ssr: false,
+        loading: () => (
+          <div className="flex items-center justify-center h-32">
+            <div className="text-muted-foreground">Loading editor...</div>
+          </div>
+        ),
+      }),
     []
   );
 
-  const handleChange = (content: string) => {
-    update({
-      id: params.documentId,
-      content,
-    });
-  };
+  const handleChange = useCallback(
+    (content: string) => {
+      // Only update if content actually changed
+      if (content !== lastContentRef.current && content !== document?.content) {
+        lastContentRef.current = content;
+        update({
+          id: params.documentId,
+          content,
+        });
+      }
+    },
+    [params.documentId, update, document?.content]
+  );
 
   if (document === undefined) {
     return (

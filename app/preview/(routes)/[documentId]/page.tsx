@@ -22,7 +22,15 @@ const DocumentDetailsPage = ({ params }: Props) => {
   const update = useMutation(api.documents.updateDocument);
 
   const Editor = useMemo(
-    () => dynamic(() => import("@/components/editor"), { ssr: false }),
+    () =>
+      dynamic(() => import("@/components/editor"), {
+        ssr: false,
+        loading: () => (
+          <div className="flex items-center justify-center h-32">
+            <div className="text-muted-foreground">Loading editor...</div>
+          </div>
+        ),
+      }),
     []
   );
 

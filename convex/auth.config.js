@@ -1,7 +1,7 @@
 export default {
   providers: [
     {
-      domain: "https://selected-crawdad-18.clerk.accounts.dev",
+      domain: "https://tolerant-ewe-27.clerk.accounts.dev",
       applicationID: "convex",
     },
   ],
