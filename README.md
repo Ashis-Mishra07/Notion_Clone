@@ -38,5 +38,5 @@
 
 1. **Clone the Repository**
    ```bash
-   git clone https://github.com/yusha0123/Notion-Clone.git
+   git clone https://github.com/Ashis-Mishra07/Notion_Clone.git
    ```
