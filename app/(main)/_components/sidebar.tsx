@@ -43,19 +43,46 @@ const Sidebar = () => {
   const [isResetting, setIsResetting] = useState(false);
   const [isCollapsed, setIsCollapsed] = useState(isMobile);
 
+  const resetWidth = () => {
+    if (sidebarRef.current && navbarRef.current) {
+      setIsCollapsed(false);
+      setIsResetting(true);
+
+      sidebarRef.current.style.width = isMobile ? "100%" : "240px";
+      navbarRef.current.style.setProperty(
+        "width",
+        isMobile ? "0" : "calc(100% - 240px)"
+      );
+      navbarRef.current.style.setProperty("left", isMobile ? "100%" : "240px");
+      setTimeout(() => setIsResetting(false), 300);
+    }
+  };
+
+  const collapseSidebar = () => {
+    if (sidebarRef.current && navbarRef.current) {
+      setIsCollapsed(true);
+      setIsResetting(true);
+
+      sidebarRef.current.style.width = "0";
+      navbarRef.current.style.setProperty("width", "100%");
+      navbarRef.current.style.setProperty("left", "0");
+      setTimeout(() => setIsResetting(false), 300);
+    }
+  };
+
   useEffect(() => {
     if (isMobile) {
       collapseSidebar(); //if screen turns to mobile mode then collapse the sidebar otherwise reset it to its initial width
     } else {
       resetWidth();
     }
-  }, [isMobile]);
+  }, [isMobile, collapseSidebar, resetWidth]);
 
   useEffect(() => {
     if (isMobile) {
       collapseSidebar(); //if path changes->user tries to open a document then collapse the sidebar in mobile devices
     }
-  }, [pathname, isMobile]);
+  }, [pathname, isMobile, collapseSidebar]);
 
   const handleMouseDown = (
     event: React.MouseEvent<HTMLDivElement, MouseEvent>
@@ -91,33 +118,6 @@ const Sidebar = () => {
     document.removeEventListener("mouseup", handleMouseUp);
   };
 
-  const resetWidth = () => {
-    if (sidebarRef.current && navbarRef.current) {
-      setIsCollapsed(false);
-      setIsResetting(true);
-
-      sidebarRef.current.style.width = isMobile ? "100%" : "240px";
-      navbarRef.current.style.setProperty(
-        "width",
-        isMobile ? "0" : "calc(100% - 240px)"
-      );
-      navbarRef.current.style.setProperty("left", isMobile ? "100%" : "240px");
-      setTimeout(() => setIsResetting(false), 300);
-    }
-  };
-
-  const collapseSidebar = () => {
-    if (sidebarRef.current && navbarRef.current) {
-      setIsCollapsed(true);
-      setIsResetting(true);
-
-      sidebarRef.current.style.width = "0";
-      navbarRef.current.style.setProperty("width", "100%");
-      navbarRef.current.style.setProperty("left", "0");
-      setTimeout(() => setIsResetting(false), 300);
-    }
-  };
-
   const handleCreate = () => {
     const promise = create({ title: "Untitled" }).then((documentId) =>
       router.push(`/documents/${documentId}`)
@@ -138,16 +138,14 @@ const Sidebar = () => {
           "group/sidebar h-full bg-secondary overflow-y-auto relative flex w-60 flex-col z-[99999]",
           isResetting && "transition-all ease-in-out duration-300",
           isMobile && "w-0"
-        )}
-      >
+        )}>
         <div
           onClick={collapseSidebar}
           role="button"
           className={cn(
             "h-6 w-6 text-muted-foreground rounded-sm hover:bg-neutral-300 dark:hover:bg-neutral-600 absolute top-3 right-2 opacity-0 group-hover/sidebar:opacity-100 transition",
             isMobile && "opacity-100"
-          )}
-        >
+          )}>
           <ChevronsLeft className="h-6 w-6" />
         </div>
         <div>
@@ -165,8 +163,7 @@ const Sidebar = () => {
             </PopoverTrigger>
             <PopoverContent
               className="p-0 w-72"
-              side={isMobile ? "bottom" : "right"}
-            >
+              side={isMobile ? "bottom" : "right"}>
               <TrashBox />
             </PopoverContent>
           </Popover>
@@ -183,8 +180,7 @@ const Sidebar = () => {
           "absolute top-0 z-[99999] left-60 w-[calc(100%-240px)]",
           isResetting && "transition-all ease-in-out duration-300",
           isMobile && "left-0 w-full"
-        )}
-      >
+        )}>
         {!!params.documentId ? (
           <Navbar isCollapsed={isCollapsed} onResetWidth={resetWidth} />
         ) : (

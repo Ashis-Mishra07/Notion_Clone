@@ -125,7 +125,7 @@ const Editor = ({ onChange, content, editable }: Props) => {
         }
       }
     };
-  }, [BlockNoteComponents, isMounted]); // Removed dependencies that cause recreation
+  }, [BlockNoteComponents, isMounted]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Handle content updates from props without recreating editor
   useEffect(() => {

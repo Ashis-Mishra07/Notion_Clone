@@ -5,6 +5,7 @@ import * as React from "react";
 import { useDropzone, type DropzoneOptions } from "react-dropzone";
 import { twMerge } from "tailwind-merge";
 import Loading from "./Loading";
+import Image from "next/image";
 
 const variants = {
   base: "relative rounded-md flex justify-center items-center flex-col cursor-pointer min-h-[150px] min-w-[200px] border border-dashed border-gray-400 dark:border-gray-300 transition-colors duration-200 ease-in-out",
@@ -132,16 +133,18 @@ const SingleImageDropzone = React.forwardRef<HTMLInputElement, InputProps>(
               width,
               height,
             },
-          })}
-        >
+          })}>
           <input ref={ref} {...getInputProps()} />
 
           {imageUrl ? (
-            <img
-              className="h-full w-full rounded-md object-cover"
-              src={imageUrl}
-              alt={acceptedFiles[0]?.name}
-            />
+            <div className="relative h-full w-full rounded-md">
+              <Image
+                className="rounded-md object-cover"
+                src={imageUrl}
+                alt={acceptedFiles[0]?.name || "Uploaded image"}
+                fill
+              />
+            </div>
           ) : (
             <div className="flex flex-col items-center justify-center text-xs text-gray-400">
               <UploadCloudIcon className="mb-2 h-7 w-7" />
@@ -156,8 +159,7 @@ const SingleImageDropzone = React.forwardRef<HTMLInputElement, InputProps>(
               onClick={(e) => {
                 e.stopPropagation();
                 void onChange?.(undefined);
-              }}
-            >
+              }}>
               <div className="flex h-5 w-5 items-center justify-center rounded-md border border-solid border-gray-500 bg-white transition-all duration-300 hover:h-6 hover:w-6 dark:border-gray-400 dark:bg-black">
                 <X
                   className="text-gray-500 dark:text-gray-400"
